@@ -76,66 +76,79 @@ When you follow this convention, the MCP's 3x document boost ensures agents read
 - **Markdown trimming** -- for `.md` results, returns ~10 lines around the keyword match instead of the full chunk, reducing noise.
 - **LSP integration** -- Python symbol lookup via [jedi](https://github.com/davidhalter/jedi); TypeScript via [ts-morph](https://github.com/dsherret/ts-morph).
 
-## Installation
+## Quick Start
 
-### Option 1: Use with Study-With-LLM (Recommended)
+### Prerequisites
 
-RACode is built-in to the [Study-With-LLM](https://github.com/huiyuanXP/Study-With-LLM-refactor) project. Simply clone the repository:
-
-```bash
-git clone https://github.com/huiyuanXP/Study-With-LLM-refactor.git
-cd Study-With-LLM-refactor
-
-# Install MCP dependencies
-pip install mcp jedi
-cd mcp && npm install && cd ..
-
-# MCP is already configured in .mcp.json - ready to use!
-claude mcp list
-```
-
-### Option 2: Standalone Installation
-
-To use RACode in your own project:
-
-**Prerequisites:**
 - Python 3.10+
 - Node.js 18+ (for TypeScript symbol lookup)
+- Claude Code CLI
 
-**Setup:**
+### Installation
 
 ```bash
-# 1. Copy the mcp/ directory to your project
-cp -r /path/to/Study-With-LLM-refactor/mcp /path/to/your-project/
+# 1. Clone RACode repository
+git clone https://github.com/huiyuanXP/racode.git
+cd racode
 
 # 2. Install dependencies
-cd /path/to/your-project/mcp
-pip install mcp jedi
+pip install -r requirements.txt
 npm install
 
-# 3. Configure .mcp.json in your project root
+# 3. Test the server (optional)
+python test_integration.py -v
 ```
 
-**Configure `.mcp.json`:**
+### Configuration
 
-Add the following to your project root `.mcp.json`:
+Add RACode to your project's `.mcp.json`:
 
 ```json
 {
   "mcpServers": {
     "racode": {
       "command": "python",
-      "args": ["mcp/server.py", "--project-root", "."]
+      "args": ["/path/to/racode/server.py", "--project-root", "."]
     }
   }
 }
 ```
 
-Verify the connection:
+Or use a relative path if you copied RACode into your project:
+
+```json
+{
+  "mcpServers": {
+    "racode": {
+      "command": "python",
+      "args": ["mcp/racode/server.py", "--project-root", "."]
+    }
+  }
+}
+```
+
+### Verification
 
 ```bash
 claude mcp list
+# Should show: racode (connected)
 ```
+
+---
+
+## Built for SkipLec
+
+RACode was originally developed for [**SkipLec**](https://github.com/huiyuanXP/skiplec) — an AI-powered study platform that transforms lectures into structured notes.
+
+SkipLec's codebase (10K+ files) needed intelligent code navigation, which led to RACode's creation. The project showcases RACode's real-world usage with:
+
+- **Structured documentation** — FileStructure.md and IntegrationGuide.md in every folder, optimized for RACode's 3x document boost
+- **Zero-config setup** — Clone SkipLec and RACode works immediately via git subtree integration
+- **90% token savings** — Agents explore the codebase using RACode instead of Grep/Glob
+
+**See RACode in action**: Check out [SkipLec's codebase](https://github.com/huiyuanXP/skiplec) to see how a real project organizes documentation for RACode's BM25 search.
+
+**⭐ If RACode helps your project, consider starring [SkipLec](https://github.com/huiyuanXP/skiplec) to support the project that made it possible!**
 
 ## Recommended Setup
 
