@@ -2,6 +2,10 @@
 
 **Retrieval-Augmented Code Search** — BM25 + LSP intelligence for large codebases.
 
+[![Built for SkipLec](https://img.shields.io/badge/Built_for-SkipLec-green?logo=github)](https://github.com/huiyuanXP/skiplec)
+[![Star SkipLec](https://img.shields.io/github/stars/huiyuanXP/skiplec?style=social&label=Star%20SkipLec)](https://github.com/huiyuanXP/skiplec)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A Model Context Protocol (MCP) server that provides intelligent code search for Claude Code. Unlike traditional RAG (which uses embeddings), RACode uses **BM25 ranking** for precise keyword matching and **LSP integration** for compiler-grade symbol resolution — all running locally with zero external API calls.
 
 ## Why Choose This MCP?
