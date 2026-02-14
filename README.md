@@ -8,6 +8,12 @@
 
 A Model Context Protocol (MCP) server that provides intelligent code search for Claude Code. Unlike traditional RAG (which uses embeddings), RACode uses **BM25 ranking** for precise keyword matching and **LSP integration** for compiler-grade symbol resolution — all running locally with zero external API calls.
 
+## TL;DR
+let agent install it for you :
+```markdown
+Install RACode MCP with [instructions](https://github.com/huiyuanXP/racode/blob/main/.claude/agents/installer.md)
+```
+
 ## Why Choose This MCP?
 
 ### The 10K+ File Problem
