@@ -1,0 +1,12 @@
+{
+  "name": "racode-ts-helper",
+  "version": "1.0.0",
+  "description": "TypeScript LSP helper for RACode (Retrieval-Augmented Code Search)",
+  "main": "ts_helper.js",
+  "dependencies": {
+    "ts-morph": "^21.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
