@@ -154,159 +154,22 @@ SkipLec's codebase (10K+ files) needed intelligent code navigation, which led to
 
 **⭐ If RACode helps your project, consider starring [SkipLec](https://github.com/huiyuanXP/skiplec) to support the project that made it possible!**
 
-## Recommended Setup
+## Optimal Configuration (Agent-Assisted)
 
-To get the most out of this MCP, configure these three things: a **rule file**, a **hook**, and **folder-level documentation**.
+To maximize RACode's effectiveness with Claude Code, use the automated installer agent:
 
----
-
-### 1. Rule File (Prompt for Claude Code)
-
-Create `.claude/rules/code-search.md` to instruct Claude Code to prefer MCP tools over built-in Grep/Glob:
-
-```markdown
-# Code Search MCP
-
-## Tool Priority for Code Exploration
-
-Use Code Search MCP **before** Grep/Glob when exploring code:
-
-1. **`code_search_search`** -- Full-text search with BM25 ranking
-   - Documentation files (FileStructure.md, IntegrationGuide.md) get 3x boost
-   - Params: `query` (keywords), `extensions` (.md/.py/.tsx/*), `limit` (default 5)
-
-2. **`code_search_get_definition`** -- Jump to symbol definition via LSP
-   - Params: `symbol` (name), `language` (python/typescript)
-
-3. **`code_search_get_references`** -- Find all usages of a symbol via LSP
-   - Params: `symbol` (name), `language` (python/typescript)
-
-4. **`code_search_rebuild_index`** -- Force full re-index (rarely needed)
-
-## When to Use Code Search vs Grep/Glob
-
-| Task | Use |
-|------|-----|
-| Find where a function/component is defined | `code_search_get_definition` |
-| Find all usages of a symbol | `code_search_get_references` |
-| Understand a feature or module | `code_search_search` with `.md` |
-| Find implementation code | `code_search_search` with `.py`/`.tsx` |
-| Exact regex pattern match | Grep (fallback) |
-| Find files by name/glob | Glob (fallback) |
-
-## Typical Workflow
-
-    code_search_search(query="feature name", extensions=".md")   -- find docs
-    code_search_get_definition(symbol="SymbolName", language=...) -- jump to source
-    code_search_get_references(symbol="SymbolName", language=...) -- find usages
-    Read specific file                                            -- read full context
+```bash
+# In your project directory with Claude Code
+# Ask Claude:
+"Install RACode MCP with optimal configuration using the racode installer agent"
 ```
 
----
+The installer will configure:
+- **Rule file** (`.claude/rules/code-search.md`) — Instructs Claude to prefer RACode over Grep/Glob
+- **PreToolUse hook** — Gentle reminder when using Grep/Glob on code
+- **Documentation guidelines** — How to structure FileStructure.md for 3x search boost
 
-### 2. Hook (Gentle Reminder)
-
-Add a PreToolUse hook in `.claude/hooks/hooks.json` to remind Claude Code about MCP tools when it uses Grep/Glob for code exploration:
-
-```json
-{
-  "matcher": "tool == \"Grep\" || tool == \"Glob\"",
-  "hooks": [
-    {
-      "type": "command",
-      "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const p=(i.tool_input?.pattern||i.tool_input?.query||'').toLowerCase();const kw=['function','class','interface','import','export','component','usestate','useeffect','def ','service','handler','.tsx','.ts','.py'];if(kw.some(k=>p.includes(k))){console.error('[Hook] TIP: Consider code_search_search / code_search_get_definition / code_search_get_references for code exploration')}console.log(d)})\""
-    }
-  ],
-  "description": "Suggest Code Search MCP when Grep/Glob is used for code exploration"
-}
-```
-
-This hook checks the search pattern for code-related keywords (like `function`, `class`, `component`) and prints a tip to stderr suggesting the MCP tools instead. It does not block execution.
-
----
-
-### 3. Folder-Level Documentation (FileStructure.md)
-
-This MCP is designed to work with structured folder documentation. When you maintain `FileStructure.md` and `IntegrationGuide.md` files in each folder, the MCP indexes them with a **3x ranking boost**, making project knowledge instantly searchable.
-
-#### Recommended Structure
-
-```
-your-project/
-  backend/
-    app/
-      FileStructure.md      <-- describes each file in app/
-      IntegrationGuide.md   <-- how to use app/ from other modules
-      auth/
-        FileStructure.md
-        IntegrationGuide.md
-  frontend/
-    components/
-      FileStructure.md
-      IntegrationGuide.md
-```
-
-#### FileStructure.md Format
-
-Each file in the folder gets a heading with its purpose, key functions, and dependencies:
-
-```markdown
-# backend/app/
-
-### auth_service.py
-Authentication service handling login, registration, and token management.
-
-**Key Functions:**
-- `login(email, password)` -- Validates credentials and returns JWT token
-- `register(user_data)` -- Creates new user account
-- `verify_token(token)` -- Validates and decodes JWT
-
-**Dependencies**: `models.py`, `database.py`, `utils/crypto.py`
-
-### file_parser.py
-Parses uploaded files (PDF, DOCX, TXT) into structured text for LLM processing.
-
-**Key Functions:**
-- `parse_file(file_path)` -- Detects format and extracts text
-- `chunk_text(text, max_tokens)` -- Splits text into LLM-sized chunks
-
-**Dependencies**: `PyPDF2`, `python-docx`
-```
-
-#### IntegrationGuide.md Format
-
-Describes how other parts of the codebase should use this folder's functionality:
-
-```markdown
-# backend/app/ Integration Guide
-
-### Authentication
-```python
-from app.auth_service import login, verify_token
-
-# Login and get token
-result = login("user@example.com", "password")
-token = result["token"]
-
-# Verify token in middleware
-user = verify_token(request.headers["Authorization"])
-```
-
-### When to Use
-- Use `auth_service` for all authentication -- never access user table directly
-- Use `file_parser` for file uploads -- it handles format detection automatically
-
-### When NOT to Use
-- Don't import internal helpers like `_hash_password` -- use the public API
-```
-
-#### Why This Matters
-
-Without documentation files, Claude Code must grep through raw source code to understand your project. With `FileStructure.md` and `IntegrationGuide.md`:
-
-1. **Faster context loading** -- Claude reads a 50-line doc summary instead of 500 lines of source code
-2. **Better search ranking** -- the 3x boost ensures structural docs surface before random code matches
-3. **Consistent understanding** -- documentation captures intent and usage patterns that code alone does not convey
+**Manual setup**: See [`.claude/agents/installer.md`](./.claude/agents/installer.md) for step-by-step instructions
 
 ## Performance
 

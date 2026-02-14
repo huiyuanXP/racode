@@ -1,0 +1,14 @@
+{
+  "PreToolUse": [
+    {
+      "matcher": "tool == \"Grep\" || tool == \"Glob\"",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const p=(i.tool_input?.pattern||i.tool_input?.query||'').toLowerCase();const kw=['function','class','interface','import','export','component','usestate','useeffect','def ','service','handler','.tsx','.ts','.py'];if(kw.some(k=>p.includes(k))){console.error('[Hook] TIP: Consider code_search_search / code_search_get_definition / code_search_get_references for code exploration')}console.log(d)})\""
+        }
+      ],
+      "description": "Suggest Code Search MCP when Grep/Glob is used for code exploration"
+    }
+  ]
+}
